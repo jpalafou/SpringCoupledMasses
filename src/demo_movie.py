@@ -13,16 +13,16 @@ system = SpringCoupledMasses(
     stiffness=[3, 3, 3],
     damping=[0.1, 0.1, 0.1],
 )
-v = 0.1 * np.random.rand(3) # random velocity perturbation
-system.set_initial_condition(v0 = np.array([2*v, -v, -v]))
+v = 0.2 * np.random.rand(3)  # random velocity perturbation
+system.set_initial_condition(v0=np.array([2 * v, -v, -v]))
 start = time()
 system.rk4(T=5, timesteps=20001, frames=num_frames)
 print(f"Solved in {time() - start:.2f} s")
 
 # make 3d plots for frames of the gif
-folder_path = "frames"
-if not os.path.exists(folder_path):
-    os.makedirs(folder_path)
+frame_path = "../frames"
+if not os.path.exists(frame_path):
+    os.makedirs(frame_path)
 for frame in range(num_frames):
     fig = plt.figure(figsize=(8, 6))
     ax = fig.add_subplot(111, projection="3d")
@@ -50,19 +50,21 @@ for frame in range(num_frames):
     ax.set_ylim(-1, 1)
     ax.set_zlim(-1, 1)
     ax.set_title(f"t = {system.t[frame]:.2f}")
-    plt.savefig(f"{folder_path}/{frame:03d}.png")
+    plt.savefig(f"{frame_path}/{frame:03d}.png")
     plt.close(fig)
-print(f"Saved frames to {folder_path}")
+print(f"Saved frames to {frame_path}")
 
 # list of filenames
-png_files = sorted([f for f in os.listdir(folder_path) if f.endswith(".png")])
+png_files = sorted([f for f in os.listdir(frame_path) if f.endswith(".png")])
 
 # create list of image files
 images = []
 for png_file in png_files:
-    image = Image.open(os.path.join(folder_path, png_file))
+    image = Image.open(os.path.join(frame_path, png_file))
     images.append(image)
 
 # convert to gif
-images[0].save("media/demo.gif", save_all=True, append_images=images[1:], duration=0, loop=0)
+images[0].save(
+    "../media/demo.gif", save_all=True, append_images=images[1:], duration=0, loop=0
+)
 print("Generated gif")
