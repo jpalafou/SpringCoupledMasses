@@ -60,6 +60,10 @@ class SpringCoupledMasses:
             x0  array of shape (n,d) where d is dimensionality
             v0  like x0
         """
+        if x0 is None and v0 is not None:
+            d = v0.shape[1]
+        if x0 is not None and v0 is None:
+            d = x0.shape[1]
         if x0 is None:
             x0 = 2 * rand(self.n, d) - 1
         if v0 is None:

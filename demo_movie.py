@@ -1,3 +1,4 @@
+import numpy as np
 import matplotlib.pyplot as plt
 import os
 from PIL import Image
@@ -5,22 +6,24 @@ from time import time
 from spring import SpringCoupledMasses
 
 # define system and solve
+num_frames = 101
 system = SpringCoupledMasses(
     m=[1, 1, 1],
     pairs=[(0, 1), (0, 2), (1, 2)],
-    stiffness=[2, 2, 2],
+    stiffness=[3, 3, 3],
     damping=[0.1, 0.1, 0.1],
 )
-system.set_initial_condition(d=3)
+v = 0.1 * np.random.rand(3) # random velocity perturbation
+system.set_initial_condition(v0 = np.array([2*v, -v, -v]))
 start = time()
-system.rk4(T=5, timesteps=50001, frames=101)
+system.rk4(T=5, timesteps=20001, frames=num_frames)
 print(f"Solved in {time() - start:.2f} s")
 
 # make 3d plots for frames of the gif
 folder_path = "frames"
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)
-for frame in range(101):
+for frame in range(num_frames):
     fig = plt.figure(figsize=(8, 6))
     ax = fig.add_subplot(111, projection="3d")
     for p in range(len(system.m)):
@@ -61,5 +64,5 @@ for png_file in png_files:
     images.append(image)
 
 # convert to gif
-images[0].save("demo.gif", save_all=True, append_images=images[1:], duration=0, loop=0)
+images[0].save("media/demo.gif", save_all=True, append_images=images[1:], duration=0, loop=0)
 print("Generated gif")
